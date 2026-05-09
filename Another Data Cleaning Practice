@@ -1,0 +1,117 @@
+CREATE DATABASE company_records;
+USE company_records;
+
+CREATE TABLE employee_messy (
+    emp_id INT,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department VARCHAR(100),
+    salary VARCHAR(50),
+    joining_date VARCHAR(50),
+    email VARCHAR(100),
+    phone_number VARCHAR(50),
+    country VARCHAR(100),
+    performance_score VARCHAR(20)
+);
+
+INSERT INTO employee_messy VALUES
+(1, ' Ali ', 'Khan', 'IT', '50000', '01/15/2023', 'ALI@GMAIL.COM', '0312-1234567', 'USA', '8'),
+(2, 'Sara', 'Ahmed ', 'Human Resources', '47000', '02/10/2022', 'sara@gmail.com', '03121234567', 'United States', '7'),
+(3, 'Ahmed', 'Raza', 'information technology', '55000', '03/12/2021', 'Ahmed@Yahoo.Com', '0312 9999999', 'U.S.A', '9'),
+(4, 'John', 'Smith', 'HR', '45000', '04/18/2020', 'johnsmithgmail.com', '0300-8888888', 'Canada', '6'),
+(5, 'Emma ', 'Watson', 'Finance', NULL, '05/20/2019', 'emma@gmail.com', NULL, 'CANADA', '10'),
+(6, 'Ali', 'Khan', 'IT', '50000', '01/15/2023', 'ALI@GMAIL.COM', '0312-1234567', 'USA', '8'),
+(7, ' Michael ', 'Brown', '', '70000', '06/25/2018', 'michael@gmail.com', '03-11111111', 'United Kingdom', '5'),
+(8, 'Sophia', 'Taylor', NULL, '72000', '07/30/2017', 'sophia@gmail', '0312-0000000', 'UK', '9'),
+(9, 'David', 'Wilson', 'finance', '', '08/14/2016', 'david@gmail.com', '0312-2222222', 'United States of America', 'NULL'),
+(10, 'Olivia ', 'Martin', 'FINANCE', '65000', '09/11/2015', 'olivia@gmail.com', '0312-3333333', 'USA', '7'),
+(11, 'Daniel', 'Moore', 'Finance', '65000', '09/11/2015', 'daniel@gmail.com', '0312-3333333', 'USA', '7'),
+(12, 'Ali ', 'Khan', 'IT', '50000', '01/15/2023', 'ALI@GMAIL.COM', '0312-1234567', 'USA', '8'),
+(13, 'Chris', 'Evans', 'Marketing', NULL, '', 'chrisevans@gmail.com', '', 'Australia', '6'),
+(14, 'Sophia', 'Taylor', NULL, '72000', '07/30/2017', 'sophia@gmail', '0312-0000000', 'UK', '9'),
+(15, 'Robert', 'Downey', 'Sales', '-5000', '13/15/2020', 'robert@gmail.com', '0312-4444444', 'Pakistan', '11'),
+(16, 'Tony', 'Stark', 'sales', '80000', '11/31/2022', 'tony@@gmail.com', 'abc-1234567', 'PAK', '9'),
+(17, 'Bruce', 'Wayne', 'IT', '90000', '12/10/2021', 'bruce@gmail.com', '0312-5555555', 'pakistan', '8'),
+(18, 'Clark', 'Kent', 'I.T', '85000', '10/05/2020', 'clark@gmail.com', '03125555555', 'Pak', '7'),
+(19, 'Peter', 'Parker', 'Hr', '47000', '02/30/2021', 'peter@gmail.com', '0312-6666666', 'Canada', '4'),
+(20, 'Natasha', 'Romanoff', 'Marketing', '62000', '07/25/2019', 'natasha@gmail.com', NULL, 'Australia', NULL);
+
+
+SELECT * FROM employee_messy;
+CREATE TABLE employee_messy2 LIKE employee_messy;
+INSERT INTO employee_messy2 SELECT * FROM employee_messy;
+SELECT * FROM employee_messy2;
+
+SELECT first_name, TRIM(first_name) FROM employee_messy2;
+UPDATE employee_messy2 SET first_name = TRIM(first_name);
+SELECT last_name, TRIM(last_name) FROM employee_messy2;
+UPDATE employee_messy2 SET last_name = TRIM(last_name);
+
+SET SQL_SAFE_UPDATES = 0;
+
+SELECT department FROM employee_messy2;
+UPDATE employee_messy2 SET department = 'IT' WHERE department LIKE 'info%';
+UPDATE employee_messy2 SET department = 'IT' WHERE department LIKE 'I.T';
+UPDATE employee_messy2 SET department = 'HR' WHERE department LIKE 'Hum%';
+UPDATE employee_messy2 SET department = 'HR' WHERE department LIKE 'Hr%';
+UPDATE employee_messy2 SET department = 'Sales' WHERE department LIKE 'sales';
+UPDATE employee_messy2 SET department = 'Finance' WHERE department LIKE 'FIN%';
+UPDATE employee_messy2 SET department = 'Finance' WHERE department LIKE 'fin&';
+UPDATE employee_messy2 SET department = NULL WHERE department LIKE '';
+
+UPDATE employee_messy2 SET salary = ABS(salary) WHERE salary < 0;
+UPDATE employee_messy2 SET salary = NULL WHERE salary = '';
+
+UPDATE employee_messy2 SET email = LOWER(email);
+
+SELECT phone_number FROM employee_messy2;
+UPDATE employee_messy2 SET phone_number = REPLACE(phone_number, ' ' ,'');
+UPDATE employee_messy2 SET phone_number = REPLACE(phone_number, '-' ,'');
+SELECT * FROM employee_messy2 WHERE phone_number REGEXP '[A-Za-z]';
+UPDATE employee_messy2 SET phone_number = NULL WHERE phone_number REGEXP '[A-Za-z]';
+UPDATE employee_messy2 SET phone_number = NULL WHERE phone_number = '';
+SELECT * FROM employee_messy2 WHERE LENGTH(phone_number) <>11;
+UPDATE employee_messy2 SET phone_number = NULL WHERE LENGTH(phone_number) <>11;
+
+SELECT `joining_date` FROM employee_messy2;
+SELECT `joining_date`, STR_TO_DATE(`joining_date`, '%m/%d/%Y') FROM employee_messy2;
+UPDATE employee_messy2 SET `joining_date` = NULL WHERE `joining_date` ='';
+SELECT * FROM employee_messy2 WHERE STR_TO_DATE(`joining_date`, '%m/%d/%Y') IS NULL AND `joining_date` IS NOT NULL;
+UPDATE employee_messy2 SET joining_date = NULL WHERE joining_date IN ('13/15/2020','11/31/2022','02/30/2021');
+UPDATE employee_messy2 SET `joining_date` = STR_TO_DATE(`joining_date`, '%m/%d/%Y') WHERE  STR_TO_DATE(`joining_date`, '%m/%d/%Y') IS NOT NULL;
+ALTER TABLE employee_messy2 MODIFY `joining_date` DATE;
+
+SELECT country FROM employee_messy2;
+UPDATE employee_messy2 SET country = 'USA' WHERE country LIKE 'U%';
+UPDATE employee_messy2 SET country = 'Pakistan' WHERE country LIKE 'pak%';
+UPDATE employee_messy2 SET country = 'Canada' WHERE country LIKE 'canada';
+
+UPDATE employee_messy2 SET performance_score = NULL WHERE performance_score = 'NULL';
+
+SELECT *, ROW_NUMBER() OVER (PARTITION BY first_name, last_name, email, department, salary, joining_date, phone_number, country, performance_score) as ROW_NUM FROM employee_messy2;
+WITH employee_dup AS (
+SELECT *, ROW_NUMBER() OVER (PARTITION BY first_name, last_name, email, department, salary, joining_date, phone_number, country, performance_score) as ROW_NUM FROM employee_messy2 )
+SELECT * FROM employee_dup WHERE ROW_NUM > 1;
+
+CREATE TABLE `employee_messy3` (
+  `emp_id` int DEFAULT NULL,
+  `first_name` varchar(50) DEFAULT NULL,
+  `last_name` varchar(50) DEFAULT NULL,
+  `department` varchar(100) DEFAULT NULL,
+  `salary` int DEFAULT NULL,
+  `joining_date` date DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `phone_number` varchar(50) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `performance_score` varchar(20) DEFAULT NULL,
+  `ROW_NUM` INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+SELECT * FROM employee_messy3 ORDER BY emp_id ASC;
+INSERT INTO employee_messy3  SELECT *, ROW_NUMBER() OVER (PARTITION BY first_name, last_name, email, department, salary, joining_date, phone_number, country, performance_score) as ROW_NUM FROM employee_messy2 ;
+DELETE FROM employee_messy3 WHERE ROW_NUM > 1;
+SELECT * FROM  employee_messy3 WHERE ROW_NUM = 2;
+ALTER TABLE employee_messy3 DROP COLUMN ROW_NUM;
+
+
+
