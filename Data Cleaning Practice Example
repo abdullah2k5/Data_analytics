@@ -1,0 +1,77 @@
+SELECT * FROM sales_messy;
+CREATE TABLE sales_messy2 SELECT * FROM sales_messy;
+SELECT * FROM sales_messy2;
+
+SELECT customer_name, TRIM(customer_name) FROM sales_messy2;
+UPDATE sales_messy2 SET customer_name = TRIM(customer_name);
+SELECT product_name, TRIM(product_name) FROM sales_messy2;
+UPDATE sales_messy2 SET product_name = TRIM(product_name);
+SET SQL_SAFE_UPDATES = 0;
+SELECT category FROM sales_messy2;
+UPDATE sales_messy2 SET category = NULL WHERE category ='';
+UPDATE sales_messy2 SET category = 'Electronics' WHERE category LIKE '_lectro%';
+UPDATE sales_messy2 SET category = 'Fashion' WHERE category LIKE '_ash%';
+
+UPDATE sales_messy2 SET quantity = NULL WHERE quantity = '';
+UPDATE sales_messy2 SET price = NULL WHERE price = '';
+UPDATE sales_messy2 SET price = ABS(price) WHERE price < 0;
+
+SELECT order_date FROM sales_messy2;
+SELECT order_date, STR_TO_DATE(order_date, '%m/%d/%Y') FROM sales_messy2;
+UPDATE sales_messy2 SET order_date = NULL WHERE order_date = '';
+UPDATE sales_messy2 SET order_date = NULL WHERE order_date IN ('13/15/2023','11/31/2023','02/30/2023');
+UPDATE sales_messy2 SET `order_date` = STR_TO_DATE(`order_date`, '%m/%d/%Y') WHERE `order_date` IS NOT NULL ;
+ALTER TABLE sales_messy2 MODIFY `order_date` DATE;
+ALTER TABLE sales_messy2 MODIFY price INT;
+
+UPDATE sales_messy2 SET payment_method = 'Credit Card' WHERE payment_method LIKE 'credit%';
+UPDATE sales_messy2 SET payment_method = 'Cash' WHERE payment_method LIKE 'cash';
+UPDATE sales_messy2 SET payment_method = 'Paypal' WHERE payment_method LIKE 'paypal';
+
+SELECT country FROM sales_messy2;
+UPDATE sales_messy2 SET country = 'Pakistan' WHERE country LIKE '_ak%';
+UPDATE sales_messy2 SET country = 'USA' WHERE country LIKE 'U%';
+UPDATE sales_messy2 SET country = 'United Kingdom' WHERE country LIKE 'UK';
+UPDATE sales_messy2 SET country = 'Canada' WHERE country LIKE 'CAN%';
+
+UPDATE sales_messy2 SET rating = NULL WHERE rating = 'NULL';
+
+SELECT *, ROW_NUMBER() OVER(PARTITION BY customer_name, product_name, category, quantity, price, order_date, payment_method, city, country, rating) AS ROW_NUM FROM sales_messy2;
+CREATE TABLE `sales_messy3` (
+  `order_id` int DEFAULT NULL,
+  `customer_name` varchar(100) DEFAULT NULL,
+  `product_name` varchar(100) DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `quantity` varchar(20) DEFAULT NULL,
+  `price` int DEFAULT NULL,
+  `order_date` date DEFAULT NULL,
+  `payment_method` varchar(50) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `rating` varchar(20) DEFAULT NULL,
+  `ROW_NUM` INT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO sales_messy3  SELECT *, ROW_NUMBER() OVER(PARTITION BY customer_name, product_name, category, quantity, price, order_date, payment_method, city, country, rating) AS ROW_NUM FROM sales_messy2;
+SELECT * FROM sales_messy3;
+DELETE FROM sales_messy3 WHERE ROW_NUM > 1;
+ALTER TABLE sales_messy3 DROP COLUMN ROW_NUM;
+
+
+SELECT SUM(price * quantity) AS Total_revenue FROM sales_messy3;
+SELECT AVG(price) AS average_price FROM sales_messy3;
+SELECT MAX(price) AS average_price FROM sales_messy3;
+SELECT product_name, price FROM sales_messy3 ORDER BY price DESC;
+SELECT country, COUNT(DISTINCT order_id) AS Total_orders FROM sales_messy3 GROUP BY country;
+SELECT category, SUM(price * quantity) AS Total_revenue FROM sales_messy3 GROUP BY category;
+
+SELECT customer_name, SUM(price) AS Total_price FROM sales_messy3 GROUP BY customer_name ORDER BY Total_price DESC LIMIT 5;
+SELECT payment_method, COUNT(*) AS Most_usage FROM sales_messy3 GROUP BY payment_method ORDER BY Most_usage DESC LIMIT 1;
+SELECT category, AVG(rating) FROM sales_messy3 GROUP BY category;
+SELECT DATE_FORMAT(order_date, '%m/%Y') AS `month` , SUM(price) AS total_amount FROM sales_messy3 GROUP BY DATE_FORMAT(order_date, '%m/%Y') ORDER BY `month` ASC;
+SELECT city, SUM(price) AS Total_sales FROM sales_messy3 GROUP BY city ORDER BY Total_sales DESC LIMIT 1;
+
+SELECT payment_method FROM sales_messy3;
+UPDATE sales_messy3 SET payment_method = 'Cash' WHERE payment_method = 'COD';
+
+
+
