@@ -14,4 +14,4 @@ jobs:
       - name: Fail intentionally
         run: |
           echo "This failure is intentional for CI/CD Monitoring Dashboard testing."
-          exit 1
+          exit 0
