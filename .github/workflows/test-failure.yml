@@ -1,0 +1,17 @@
+name: AI Analysis Test - Intentional Failure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  intentional-failure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Start test
+        run: echo "Starting intentional failure test"
+
+      - name: Fail intentionally
+        run: |
+          echo "This failure is intentional for CI/CD Monitoring Dashboard testing."
+          exit 1
